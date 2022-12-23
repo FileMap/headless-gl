@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  - push
+
+jobs:
+  build:
+    name: Build for ${{ matrix.target.name }}
+    runs-on: ${{ matrix.target.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          [
+            { os: "windows-latest", name: "windows" },
+            { os: "macos-latest", name: "macos" },
+            { os: "ubuntu-latest", name: "linux" },
+          ]
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Install tools
+        if: ${{ matrix.target.name == 'linux' }}
+        run: sudo apt-get install -yyq xutils-dev libxi-dev libxxf86vm-dev x11proto-xf86vidmode-dev mesa-utils xvfb libgl1-mesa-dri libglapi-mesa libosmesa6 musl-dev libgl1-mesa-dev
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx zx scripts/build.mjs
+
+      - run: git pull
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: update build files [skip ci]
+          file_pattern: "prebuilds"

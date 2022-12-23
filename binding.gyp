@@ -2,8 +2,10 @@
   'variables': {
     'platform': '<(OS)',
     'openssl_fips' : '0',
+    'runtime%': 'node'
   },
   'conditions': [
+    ['runtime == "electron"', {'defines': ['NODE_RUNTIME_ELECTRON=1']}],
     ['platform == "mac"', {'variables': {'platform': 'darwin'}}],
     ['platform == "win"', {'variables': {'platform': 'win32'}}]
   ],
@@ -19,12 +21,15 @@
           'src/native/procs.cc'
       ],
       'include_dirs': [
-        "<!(node -e \"require('nan')\")",
+        "<!(node -e \"require('@oznakn/nan')\")",
         '<(module_root_dir)/deps/include',
         "angle/include"
       ],
       'library_dirs': [
         '<(module_root_dir)/deps/<(platform)'
+      ],
+      'cflags_cc': [
+        '-std=c++20'
       ],
       'conditions': [
         ['OS=="mac"', {
@@ -42,7 +47,7 @@
               'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
               'MACOSX_DEPLOYMENT_TARGET':'10.8',
               'CLANG_CXX_LIBRARY': 'libc++',
-              'CLANG_CXX_LANGUAGE_STANDARD':'c++17',
+              'CLANG_CXX_LANGUAGE_STANDARD':'c++20',
               'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0'
             },
         }],
@@ -65,40 +70,36 @@
               'WIN32_LEAN_AND_MEAN',
               'VC_EXTRALEAN'
             ],
-            'configurations': {
-              'Release': {
-                'msvs_settings': {
-                  'VCCLCompilerTool': {
-                    'RuntimeLibrary': 0, # static release
-                    'Optimization': 0, # /Od, disabled
-                    'FavorSizeOrSpeed': 1, # /Ot, favour speed over size
-                    'InlineFunctionExpansion': 2, # /Ob2, inline anything eligible
-                    'WholeProgramOptimization': 'false', # No
-                    'OmitFramePointers': 'true',
-                    'EnableFunctionLevelLinking': 'true',
-                    'EnableIntrinsicFunctions': 'true',
-                    'RuntimeTypeInfo': 'false',
-                    'ExceptionHandling': '0',
-                    'AdditionalOptions': [
-                      '/MP', # compile across multiple CPUs
-                    ]
-                  },
-                  'VCLinkerTool': {
-                    'LinkTimeCodeGeneration': 0, # Link Time Code generation default
-                    'OptimizeReferences': 1, # /OPT:NOREF
-                    'EnableCOMDATFolding': 1, # /OPT:NOICF
-                    'LinkIncremental': 2, # /INCREMENTAL
-                    'AdditionalOptions': [
-                      '/LTCG:OFF',
-                    ]
-                  }
-                },
-                'msvs_configuration_attributes':
-                {
-                    'OutputDirectory': '$(SolutionDir)$(ConfigurationName)',
-                    'IntermediateDirectory': '$(OutDir)\\obj\\$(ProjectName)'
-                }
+            'msvs_settings': {
+              'VCCLCompilerTool': {
+                'RuntimeLibrary': 0, # static release
+                'Optimization': 0, # /Od, disabled
+                'FavorSizeOrSpeed': 1, # /Ot, favour speed over size
+                'InlineFunctionExpansion': 2, # /Ob2, inline anything eligible
+                'WholeProgramOptimization': 'false', # No
+                'OmitFramePointers': 'true',
+                'EnableFunctionLevelLinking': 'true',
+                'EnableIntrinsicFunctions': 'true',
+                'RuntimeTypeInfo': 'false',
+                'ExceptionHandling': '0',
+                'AdditionalOptions': [
+                  '/MP', # compile across multiple CPUs
+                  '/std:c++20',
+                ]
+              },
+              'VCLinkerTool': {
+                'LinkTimeCodeGeneration': 0, # Link Time Code generation default
+                'OptimizeReferences': 1, # /OPT:NOREF
+                'EnableCOMDATFolding': 1, # /OPT:NOICF
+                'LinkIncremental': 2, # /INCREMENTAL
+                'AdditionalOptions': [
+                  '/LTCG:OFF',
+                ]
               }
+            },
+            'msvs_configuration_attributes': {
+                'OutputDirectory': '$(SolutionDir)$(ConfigurationName)',
+                'IntermediateDirectory': '$(OutDir)\\obj\\$(ProjectName)'
             },
             "copies": [
               {
