@@ -3,7 +3,7 @@ test/*
 .travis.yml
 appveyor.yml
 build/*
-prebuilds/*
+# prebuilds/*
 scripts/*
 4.6.1
 5.12.0
@@ -11,3 +11,54 @@ scripts/*
 7.0.0
 7.4.0
 8.1.3
+
+deps/*
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+/dist/**/*.test.js
+/dist/**/*.test.d.ts
+/dist/**/*.test.d.ts.map
+/src/**/*.test.ts
+/src/**/*.test.tsx
+
+# examples
+/examples
+
+# misc
+.DS_Store
+*.pem
+*.tgz
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# tools
+/.github
+/.vscode
+/.editorconfig
+/.eslintignore
+/.eslintrc.js
+/.eslintrc.json
+/.gitignore
+/.nvmrc
+/.npmignore
+/.prettierignore
+/.prettierrc.json
+/jest.config.ts
+/renovate.json
+/tsconfig.esm.json
+/tsconfig.json
+/yarn.lock
