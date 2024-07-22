@@ -21,7 +21,7 @@
           'src/native/procs.cc'
       ],
       'include_dirs': [
-        "<!(node -e \"require('@oznakn/nan')\")",
+        "<!(node -e \"require('@electron-prebuilds/nan')\")",
         '<(module_root_dir)/deps/include',
         "angle/include"
       ],
